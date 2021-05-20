@@ -93,7 +93,6 @@ function observe(xhrLink, bookingLink, secondShotXhrLink) {
     );
   };
 
-  // log("checking directly");
   axios
     .get(updateLinkDate(xhrLink))
     .then(async (response) => {
