@@ -4,6 +4,8 @@ const { format, add } = require("date-fns");
 const notifier = require("node-notifier");
 const player = require("play-sound")((opts = {}));
 
+const GRACE_PERIOD = 25000;
+
 function log(...msg) {
   console.log(new Date().toISOString(), ...msg);
 }
@@ -17,7 +19,10 @@ function updateLinkDate(link) {
 }
 
 function updateLinkDatePfizer(link) {
-  return link.replace(/\d{4}-\d{2}-\d{2}/, format(add(new Date(), {days: 42}), "yyyy-MM-dd"));
+  return link.replace(
+    /\d{4}-\d{2}-\d{2}/,
+    format(add(new Date(), { days: 42 }), "yyyy-MM-dd")
+  );
 }
 
 async function hasSuitableDate(data, xhrLink, secondShotXhrLink) {
@@ -26,11 +31,9 @@ async function hasSuitableDate(data, xhrLink, secondShotXhrLink) {
       log("More than 0 availabilities");
 
       if (secondShotXhrLink) {
-        const secondShotData = (
-          await axios.get(updateLinkDatePfizer(secondShotXhrLink))
-        ).data;
+        const secondShotData = await axios.get(updateLinkDatePfizer(secondShotXhrLink)).data;
 
-        log('second shot data', secondShotData);
+        log("second shot data", secondShotData);
 
         return secondShotData.total !== 0;
       }
@@ -93,7 +96,11 @@ function observe(xhrLink, bookingLink, secondShotXhrLink) {
     .get(updateLinkDate(xhrLink))
     .then(async (response) => {
       try {
-        const isSuitable = await hasSuitableDate(response.data, xhrLink, secondShotXhrLink);
+        const isSuitable = await hasSuitableDate(
+          response.data,
+          xhrLink,
+          secondShotXhrLink
+        );
         if (isSuitable) {
           log("direct success", response.data, bookingLink);
 
