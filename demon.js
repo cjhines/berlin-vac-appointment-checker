@@ -117,81 +117,6 @@ function observe(xhrLink, bookingLink, secondShotXhrLink) {
     });
 }
 
-let recentlyOpened = false;
-function observeImpfstoff() {
-  if (!recentlyOpened) {
-    // log("checking impfstoff.link");
-
-    axios
-      .get("https://api.impfstoff.link/?robot=1")
-      .then((response) => {
-        response.data.stats.forEach((stat) => {
-          if (stat.open === false) {
-            return;
-          }
-
-          let isOk = false;
-          switch (stat.id) {
-            case "arena":
-              isOk = true;
-              open(
-                "https://www.doctolib.de/institut/berlin/ciz-berlin-berlin?pid=practice-158431"
-              );
-              break;
-            case "tempelhof":
-              isOk = true;
-              open(
-                "https://www.doctolib.de/institut/berlin/ciz-berlin-berlin?pid=practice-158433"
-              );
-              break;
-            case "messe":
-              isOk = true;
-              open(
-                "https://www.doctolib.de/institut/berlin/ciz-berlin-berlin?pid=practice-158434"
-              );
-              break;
-            case "velodrom":
-              isOk = true;
-              open(
-                "https://www.doctolib.de/institut/berlin/ciz-berlin-berlin?pid=practice-158435"
-              );
-              break;
-            case "tegel":
-              isOk = true;
-              open(
-                "https://www.doctolib.de/institut/berlin/ciz-berlin-berlin?pid=practice-158436"
-              );
-              break;
-            case "erika":
-              isOk = true;
-              open(
-                "https://www.doctolib.de/institut/berlin/ciz-berlin-berlin?pid=practice-158437"
-              );
-              break;
-            default:
-              return;
-          }
-
-          if (!isOk) {
-            return;
-          }
-
-          log("impfstuff success", stat.id);
-
-          recentlyOpened = true;
-          setTimeout(() => {
-            recentlyOpened = false;
-          }, 60000);
-
-          notify();
-        });
-      })
-      .catch(error);
-  }
-
-  setTimeout(observeImpfstoff, 1500);
-}
-
 const data = [
   /*
     Comment back in the places you want to be checked
@@ -236,8 +161,7 @@ data.forEach((links) => {
   observe(links.xhrLink, links.bookingLink);
 });
 
-// Comment back in to observe impfstoff.link for availabilities.
-// observeImpfstoff();
-
-console.log("Started checking periodically...")
-console.log("Just keep it running, it will play a sound and open a browser when an appointment opens up")
+console.log("Started checking periodically...");
+console.log(
+  "Just keep it running, it will play a sound and open a browser when an appointment opens up"
+);
