@@ -174,6 +174,10 @@ const data = [
     bookingLink: `https://www.doctolib.de/gemeinschaftspraxis/berlin/bonedoctor-christian-rose-baharak-djohar?pid=practice-181755`,
     xhrLink: `https://www.doctolib.de/availabilities.json?start_date=2021-05-20&visit_motive_ids=2774169&agenda_ids=457175&insurance_sector=public&practice_ids=181755&destroy_temporary=true&limit=7`,
   },
+  {
+    bookingLink: `https://www.doctolib.de/praxis/berlin/kardios-am-rathaus-friedenau?pid=practice-76464`,
+    xhrLink: `https://www.doctolib.de/availabilities.json?start_date=2021-05-20&visit_motive_ids=2854139&agenda_ids=469346&insurance_sector=public&practice_ids=76464&limit=7`,
+  },
 ];
 
 data.forEach((links) => {
