@@ -171,6 +171,10 @@ const data = [
     bookingLink: `https://www.doctolib.de/praxisgemeinschaft/berlin/praxisgemeinschaft-am-planetarium?pid=practice-62579`,
     xhrLink: `https://www.doctolib.de/availabilities.json?start_date=2021-05-20&visit_motive_ids=2750981&agenda_ids=451263&insurance_sector=public&practice_ids=62579&destroy_temporary=true&limit=7`,
   },
+  {
+    bookingLink: `https://www.doctolib.de/gemeinschaftspraxis/berlin/bonedoctor-christian-rose-baharak-djohar?pid=practice-181755`,
+    xhrLink: `https://www.doctolib.de/availabilities.json?start_date=2021-05-20&visit_motive_ids=2774169&agenda_ids=457175&insurance_sector=public&practice_ids=181755&destroy_temporary=true&limit=7`,
+  },
 ];
 
 data.forEach((links) => {
