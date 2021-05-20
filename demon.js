@@ -31,7 +31,9 @@ async function hasSuitableDate(data, xhrLink, secondShotXhrLink) {
       log("More than 0 availabilities");
 
       if (secondShotXhrLink) {
-        const secondShotData = await axios.get(updateLinkDatePfizer(secondShotXhrLink)).data;
+        const secondShotData = await axios.get(
+          updateLinkDatePfizer(secondShotXhrLink)
+        ).data;
 
         log("second shot data", secondShotData);
 
