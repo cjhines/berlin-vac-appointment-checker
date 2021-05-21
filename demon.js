@@ -130,7 +130,4 @@ astra.DATA.forEach((links) => {
   observe(links.xhrLink, links.bookingLink);
 });
 
-console.log("Started checking periodically...");
-console.log(
-  "Just keep it running, it will play a sound and open a browser when an appointment opens up"
-);
+console.log("Checking for appointments...");
