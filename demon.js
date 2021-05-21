@@ -3,7 +3,7 @@ const open = require("open");
 const axios = require("axios");
 const { format, add } = require("date-fns");
 const notifier = require("node-notifier");
-const player = require("play-sound");
+const player = require("play-sound")((opts = {}));
 
 const RATE_LIMIT = 1000 * 2;
 
