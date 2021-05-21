@@ -7,7 +7,7 @@ npm start
 
 # Adding data
 
-To add your own data, use your browsers network observer to get the URL of the request.
+To add your own data, use your browsers network tab to get the URL of the request.
 
 You want the request that is fired when clicking the type of vaccine you want.
 
