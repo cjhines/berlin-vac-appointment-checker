@@ -7,6 +7,33 @@ const player = require("play-sound")((opts = {}));
 const GRACE_PERIOD = 25000;
 
 // https://www.doctolib.de/praxis/berlin/hausarztpraxis-dr-buck?insurance_sector=public
+const lookupTable = new Map([
+  [
+    "arena",
+    "https://www.doctolib.de/institut/berlin/ciz-berlin-berlin?pid=practice-158431",
+  ],
+  [
+    "tempelhof",
+    "https://www.doctolib.de/institut/berlin/ciz-berlin-berlin?pid=practice-158433",
+  ],
+  [
+    "messe",
+    "https://www.doctolib.de/institut/berlin/ciz-berlin-berlin?pid=practice-158434",
+  ],
+  [
+    "velodrom",
+    "https://www.doctolib.de/institut/berlin/ciz-berlin-berlin?pid=practice-158435",
+  ],
+  [
+    "tegel",
+    "https://www.doctolib.de/institut/berlin/ciz-berlin-berlin?pid=practice-158436",
+  ],
+  [
+    "erika",
+    "https://www.doctolib.de/institut/berlin/ciz-berlin-berlin?pid=practice-158437",
+  ],
+]);
+const rateLimit = 1000 * 2;
 
 function log(...msg) {
   console.log(new Date().toISOString(), ...msg);
@@ -29,7 +56,7 @@ function updateLinkDatePfizer(link) {
 
 async function hasSuitableDate(data, xhrLink, secondShotXhrLink) {
   try {
-    if (data.total > 0) {
+    if (data?.total) {
       log("More than 0 availabilities");
 
       if (secondShotXhrLink) {
@@ -43,7 +70,7 @@ async function hasSuitableDate(data, xhrLink, secondShotXhrLink) {
       }
     }
 
-    if (data.next_slot && data.next_slot.startsWith("2021-05")) {
+    if (data?.next_slot?.startsWith("2021-05")) {
       const newData = (
         await axios.get(xhrLink.replace(/\d{4}-\d{2}-\d{2}/, data.next_slot))
       ).data;
@@ -58,7 +85,7 @@ async function hasSuitableDate(data, xhrLink, secondShotXhrLink) {
       }
     }
 
-    if (data.availabilities) {
+    if (data?.availabilities?.length) {
       for (availability of data.availabilities) {
         if (availability.slots.length > 0) {
           log("More than one slot");
@@ -67,9 +94,9 @@ async function hasSuitableDate(data, xhrLink, secondShotXhrLink) {
       }
     }
   } catch (e) {
-    error(e);
-    return false;
+    throw e;
   }
+  return false;
 }
 
 function notify() {
@@ -80,9 +107,9 @@ function notify() {
     message: "Appointment!",
   });
 
-  player.play("./bell-ring-01.wav", (err) => {
+  player.play("./bell-ring-01.wav", function (err) {
     if (error) {
-      console.error(err);
+      error(err);
     }
   });
 }
@@ -97,10 +124,10 @@ function observe(xhrLink, bookingLink, secondShotXhrLink) {
 
   axios
     .get(updateLinkDate(xhrLink))
-    .then(async (response) => {
+    .then(async function (response) {
       try {
         const isSuitable = await hasSuitableDate(
-          response.data,
+          response?.data,
           xhrLink,
           secondShotXhrLink
         );
@@ -119,12 +146,47 @@ function observe(xhrLink, bookingLink, secondShotXhrLink) {
       } catch (e) {
         error(e);
       }
-      reschedule();
+      reschedule(rateLimit);
     })
-    .catch((e) => {
+    .catch(function (e) {
       error(e);
-      reschedule();
+      reschedule(rateLimit);
     });
+}
+
+let recentlyOpened = false;
+function observeImpfstoff() {
+  if (!recentlyOpened) {
+    log("checking impfstoff.link");
+
+    axios
+      .get("https://api.impfstoff.link/?robot=1")
+      .then(function (response) {
+        response?.data?.stats.forEach(function (stat) {
+          if (stat.open === false) {
+            return;
+          }
+
+          if (lookupTable.has(stat?.id)) {
+            open(lookupTable.get(stat.id));
+          } else {
+            return;
+          }
+
+          log("impfstuff success", stat.id);
+
+          recentlyOpened = true;
+          setTimeout(function () {
+            recentlyOpened = false;
+          }, 60000);
+
+          notify();
+        });
+      })
+      .catch(error);
+  }
+
+  setTimeout(observeImpfstoff, rateLimit);
 }
 
 const CHRIS = [
