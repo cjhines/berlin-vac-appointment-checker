@@ -1,4 +1,4 @@
-const astra = require('./astra');
+const astra = require('./data/astra');
 const open = require("open");
 const axios = require("axios");
 const { format, add } = require("date-fns");
